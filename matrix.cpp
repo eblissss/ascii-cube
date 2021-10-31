@@ -1,54 +1,71 @@
 #include "matrix.h"
 
 // Create an empty 4x4 matrix
-double** createMatrix() {
-    double **matrix = (double**)malloc(sizeof(double*) * 4);
-    for (int i = 0; i < 4; i++) {
-        matrix[i] = (double*)calloc(sizeof(double*), 4);
-    }
-    return matrix;
-}
-
-// Free a 4x4 matrix
-void destroyMatrix(double **matrix) {
-    for (int i = 0; i < 4; i++) {
-        free(matrix[i]);
-    }
-    free(matrix);
+mat4::mat4()
+{
+    a11 = 0, a12 = 0, a13 = 0, a14 = 0,
+    a21 = 0, a22 = 0, a23 = 0, a24 = 0,
+    a31 = 0, a32 = 0, a33 = 0, a34 = 0,
+    a41 = 0, a42 = 0, a43 = 0, a44 = 0;
 }
 
 // Returns a 4x4 rotation matrix for input values (from empty matrix)
-double** rotationMatrix(double **matrix, double yaw, double pitch, double roll) {
-    double sinVals[] = {sin(yaw), sin(pitch), sin(roll)};
-    double cosVals[] = {cos(yaw), cos(pitch), cos(roll)};
+mat4 mat4::rotationMatrix(float yaw, float pitch, float roll)
+{
+    float sinVals[] = {sin(yaw), sin(pitch), sin(roll)};
+    float cosVals[] = {cos(yaw), cos(pitch), cos(roll)};
 
-    matrix[0][0] = cosVals[0] * cosVals[1];
-    matrix[0][1] = cosVals[0] * sinVals[1] * sinVals[2] - sinVals[0] * cosVals[2];
-    matrix[0][2] = cosVals[0] * sinVals[1] * cosVals[2] + sinVals[0] * sinVals[2];
+    this->a11 = cosVals[0] * cosVals[1];
+    this->a12 = cosVals[0] * sinVals[1] * sinVals[2] - sinVals[0] * cosVals[2];
+    this->a13 = cosVals[0] * sinVals[1] * cosVals[2] + sinVals[0] * sinVals[2];
 
-    matrix[1][0] = sinVals[0] * cosVals[1];
-    matrix[1][1] = sinVals[0] * sinVals[1] * sinVals[2] + cosVals[0] * cosVals[2];
-    matrix[1][2] = sinVals[0] * sinVals[1] * cosVals[2] - cosVals[0] * sinVals[2];
+    this->a21 = sinVals[0] * cosVals[1];
+    this->a22 = sinVals[0] * sinVals[1] * sinVals[2] + cosVals[0] * cosVals[2];
+    this->a23 = sinVals[0] * sinVals[1] * cosVals[2] - cosVals[0] * sinVals[2];
 
-    matrix[2][0] = -sinVals[1];
-    matrix[2][1] = cosVals[1] * sinVals[2];
-    matrix[2][2] = cosVals[1] * cosVals[2];
+    this->a31 = -sinVals[1];
+    this->a32 = cosVals[1] * sinVals[2];
+    this->a33 = cosVals[1] * cosVals[2];
 
-    matrix[3][3] = 1;
+    this->a44 = 1;
 
-    return matrix;
+    return *this;
+}
+
+// Returns a 4x4 translation matrix for input values (from empty matrix)
+mat4 mat4::translationMatrix(vec3 t)
+{
+    this->a11 = 1;
+    this->a22 = 1;
+    this->a33 = 1;
+    this->a44 = 1;
+
+    this->a14 = t.x;
+    this->a24 = t.y;
+    this->a34 = t.z;
+
+    return *this;
 }
 
 // Return the vector obtained from multiplying a vec3 by a mat4 (last row ignored)
-double* mulVec3Mat4(double *vec3, double **mat4) {
-    double inVec[4] = {vec3[0], vec3[1], vec3[2], 1};
-    double *outVec = (double*)malloc(sizeof(double) * 3);
+vec3 mat4::operator*(const vec3 &v)
+{
+    vec3 outVec = vec3(0, 0, 0);
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 4; j++) {
-            outVec[i] += inVec[j] * mat4[i][j];
-        }        
-    }
+    outVec.x += v.x * this->a11;
+    outVec.x += v.y * this->a12;
+    outVec.x += v.z * this->a13;
+    outVec.x += 1 * this->a14;
+
+    outVec.y += v.x * this->a21;
+    outVec.y += v.y * this->a22;
+    outVec.y += v.z * this->a23;
+    outVec.y += 1 * this->a24;
+
+    outVec.z += v.x * this->a31;
+    outVec.z += v.y * this->a32;
+    outVec.z += v.z * this->a33;
+    outVec.z += 1 * this->a34;
 
     return outVec;
 }
