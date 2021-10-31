@@ -15,7 +15,6 @@ using namespace std;
 
 const int width = 80;
 const int height = 40;
-//const double rotation[3] = {0.002, 0.003, 0.001};
 
 // Clear h lines of console window
 void clearWindow(int h)
@@ -60,9 +59,8 @@ int main()
     string consoleConfig = "MODE CON COLS=" + to_string(width) + " LINES=" + to_string(height);
     system(consoleConfig.c_str());
 
-    // Generate initial arrays
+    // Generate frame buffer
     char **frame = allocateFrame(width, height);
-    //double **rotMatrix = createMatrix();
 
     Camera c = Camera(80, 40);
 
@@ -76,11 +74,6 @@ int main()
         auto diffTime = chrono::duration_cast<chrono::milliseconds>(curTime - startTime).count();
         startTime = curTime;
         long value_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch()).count();
-        // Rotate depending on time elapsed
-        /*rotMatrix = rotationMatrix(rotMatrix,
-                               rotation[0] * diffTime,
-                               rotation[1] * diffTime,
-                               rotation[2] * diffTime); */
 
         // Render & display
         c.draw_frame(frame, value_ms);
@@ -92,6 +85,5 @@ int main()
     }
 
     destroyFrame(frame, height);
-    //destroyMatrix(rotMatrix);
     return EXIT_SUCCESS;
 }

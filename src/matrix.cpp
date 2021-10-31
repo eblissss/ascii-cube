@@ -47,6 +47,37 @@ mat4 mat4::translationMatrix(vec3 t)
     return *this;
 }
 
+// Returns a 4x4 matrix for looking at a point
+mat4 mat4::lookAt(vec3 origin, vec3 point)
+{
+    vec3 zAxis = (point - origin).norm();
+    vec3 xAxis = zAxis.cross(vec3(0, 1, 0)).norm();
+    vec3 yAxis = xAxis.cross(zAxis);
+
+    this->a11 = xAxis.x;
+    this->a21 = xAxis.y;
+    this->a31 = xAxis.z;
+
+    this->a12 = yAxis.x;
+    this->a22 = yAxis.y;
+    this->a32 = yAxis.z;
+
+    this->a13 = zAxis.x;
+    this->a23 = zAxis.y;
+    this->a33 = zAxis.z;
+
+    this->a41 = -(xAxis.dot(origin));
+    this->a42 = -(yAxis.dot(origin));
+    this->a43 = -(zAxis.dot(origin));
+
+    this->a14 = 0;
+    this->a24 = 0;
+    this->a34 = 0;
+    this->a44 = 1;
+
+    return *this;
+}
+
 // Return the vector obtained from multiplying a vec3 by a mat4 (last row ignored)
 vec3 mat4::operator*(const vec3 &v)
 {

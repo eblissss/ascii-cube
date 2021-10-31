@@ -23,6 +23,9 @@ public:
     // Create a translation matrix
     mat4 translationMatrix(vec3 t);
 
+    // Returns a 4x4 matrix for looking at a point (from empty matrix)
+    mat4 lookAt(vec3 origin, vec3 point);
+
     // Multiply a vec3 by a mat4 and return a vec3, ignoring the last row
     vec3 operator*(const vec3 &v);
 };

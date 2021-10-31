@@ -7,13 +7,13 @@
       "command": "C:\\MinGW\\bin\\g++.exe",
       "args": [
         "-g",
-        "${fileDirname}\\**.cpp",
-        "${fileDirname}\\**.h",
+        "**.cpp",
+        "**.h",
         "-o",
         "${fileDirname}\\${fileBasenameNoExtension}.exe"
       ],
       "options": {
-        "cwd": "${fileDirname}"
+        "cwd": "${workspaceRoot}/src"
       },
       "problemMatcher": ["$gcc"],
       "group": {
